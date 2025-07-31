@@ -4,32 +4,33 @@
   <meta charset="UTF-8">
   <title>Calculateur de Titres Restaurant</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="bg-gray-100 min-h-screen p-6">
-  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Calculateur de Titres Restaurant</h1>
+<body class="bg-gray-100 min-h-screen p-4 text-base text-gray-800">
+  <div class="max-w-4xl mx-auto bg-white rounded-md shadow-md p-4 sm:p-6">
+    <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 text-center">Calculateur de Titres Restaurant</h1>
     <form id="trForm" class="space-y-6">
       <div id="salariés" class="space-y-6"></div>
 
-      <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-        <button type="button" onclick="ajouterSalarie()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">+ Ajouter une salariée</button>
-        <button type="button" onclick="resetSalaries()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-auto">Réinitialiser les salariées</button>
+      <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+        <button type="button" onclick="ajouterSalarie()" class="bg-blue-500 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-600 w-full sm:w-auto">+ Ajouter une salariée</button>
+        <button type="button" onclick="resetSalaries()" class="bg-red-500 text-white px-4 py-2 text-sm rounded-md hover:bg-red-600 w-full sm:w-auto">Réinitialiser les salariées</button>
       </div>
 
       <div>
         <label class="block font-medium">Mois (au format AAAA-MM)</label>
-        <input type="month" id="mois" required class="mt-1 w-full p-2 border border-gray-300 rounded">
+        <input type="month" id="mois" required class="mt-1 w-full p-2 border border-gray-300 rounded-md text-base">
       </div>
 
       <div>
         <label class="block font-medium">Jours fériés (JJ/MM séparés par virgule, prérempli)</label>
-        <input type="text" id="feries" class="mt-1 w-full p-2 border border-gray-300 rounded">
+        <input type="text" id="feries" class="mt-1 w-full p-2 border border-gray-300 rounded-md text-base">
       </div>
 
-      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto">Calculer</button>
+      <button type="submit" class="bg-green-500 text-white px-4 py-2 text-sm rounded-md hover:bg-green-600 w-full sm:w-auto">Calculer</button>
     </form>
 
-    <div class="results text-lg mt-6 text-gray-800 font-semibold" id="resultat"></div>
+    <div class="results text-base mt-6 text-gray-900 font-semibold leading-relaxed" id="resultat"></div>
   </div>
 
   <script>
@@ -75,23 +76,21 @@
     function ajouterSalarie(data = {}) {
       const container = document.getElementById("salariés");
       const block = document.createElement("div");
-      block.className = "bg-gray-50 border border-gray-300 rounded-lg p-4";
+      block.className = "bg-gray-50 border border-gray-300 rounded-md p-4";
       block.innerHTML = `
         <div class="mb-4">
           <label class="block font-medium">Nom</label>
-          <input type="text" name="nom" value="${data.nom || ''}" required class="mt-1 w-full p-2 border border-gray-300 rounded">
+          <input type="text" name="nom" value="${data.nom || ''}" required class="mt-1 w-full p-2 border border-gray-300 rounded-md">
         </div>
-
         <div class="mb-4">
           <label class="block font-medium">Jours travaillés (Ctrl/Cmd+clic pour sélection multiple)</label>
-          <select name="joursTravailles" multiple required class="mt-1 w-full p-2 border border-gray-300 rounded max-h-32 overflow-auto">
+          <select name="joursTravailles" multiple required class="mt-1 w-full p-2 border border-gray-300 rounded-md max-h-32 overflow-auto">
             ${jours.map(j => `<option ${data.joursTravailles?.includes(j) ? 'selected' : ''}>${j}</option>`).join('')}
           </select>
         </div>
-
         <div class="mb-4">
           <label class="block font-medium">Jours sans pause déjeuner</label>
-          <select name="joursSansPause" multiple class="mt-1 w-full p-2 border border-gray-300 rounded max-h-32 overflow-auto">
+          <select name="joursSansPause" multiple class="mt-1 w-full p-2 border border-gray-300 rounded-md max-h-32 overflow-auto">
             ${jours.map(j => `<option ${data.joursSansPause?.includes(j) ? 'selected' : ''}>${j}</option>`).join('')}
           </select>
         </div>
