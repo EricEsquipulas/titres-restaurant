@@ -11,7 +11,10 @@
     <form id="trForm" class="space-y-6">
       <div id="salariés" class="space-y-6"></div>
 
-      <button type="button" onclick="ajouterSalarie()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">+ Ajouter une salariée</button>
+      <div class="flex gap-4">
+        <button type="button" onclick="ajouterSalarie()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">+ Ajouter une salariée</button>
+        <button type="button" onclick="resetSalaries()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Réinitialiser les salariées</button>
+      </div>
 
       <div>
         <label class="block font-medium">Mois (au format AAAA-MM)</label>
@@ -37,6 +40,24 @@
       "01/01", "01/05", "08/05", "14/07", "15/08", "01/11", "11/11", "25/12"
     ];
 
+    const defaultSalaries = [
+      {
+        nom: "Sequen",
+        joursTravailles: ["lundi", "mardi", "mercredi", "jeudi", "vendredi"],
+        joursSansPause: []
+      },
+      {
+        nom: "Perez",
+        joursTravailles: ["lundi", "mardi", "jeudi", "samedi", "dimanche"],
+        joursSansPause: ["dimanche"]
+      },
+      {
+        nom: "Pisani",
+        joursTravailles: ["lundi", "mardi", "jeudi", "vendredi"],
+        joursSansPause: []
+      }
+    ];
+
     function setDefaultMonthAndFeries() {
       const now = new Date();
       const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -44,7 +65,6 @@
       const month = (nextMonth.getMonth() + 1).toString().padStart(2, '0');
       document.getElementById("mois").value = `${year}-${month}`;
 
-      // Ajoute uniquement les fériés du mois concerné
       const currentMonthFeries = feriesNationaux.filter(dateStr => {
         const [day, mon] = dateStr.split("/").map(Number);
         return mon === parseInt(month);
@@ -105,9 +125,18 @@
 
     function restaurerSalaries() {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
-      const data = JSON.parse(saved);
-      data.forEach(salarie => ajouterSalarie(salarie));
+      if (saved) {
+        const data = JSON.parse(saved);
+        data.forEach(salarie => ajouterSalarie(salarie));
+      } else {
+        defaultSalaries.forEach(salarie => ajouterSalarie(salarie));
+      }
+    }
+
+    function resetSalaries() {
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById("salariés").innerHTML = "";
+      defaultSalaries.forEach(salarie => ajouterSalarie(salarie));
     }
 
     document.getElementById("trForm").addEventListener("submit", function(e) {
@@ -146,7 +175,6 @@
       sauvegarderSalaries();
     });
 
-    // Initialisation
     setDefaultMonthAndFeries();
     restaurerSalaries();
   </script>
