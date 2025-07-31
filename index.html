@@ -3,35 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Calculateur de Titres Restaurant</title>
-  <style>
-    body { font-family: sans-serif; max-width: 900px; margin: auto; padding: 2em; }
-    label { display: block; margin-top: 1em; }
-    input, select, button { margin-top: 0.5em; padding: 0.4em; width: 100%; }
-    table { margin-top: 2em; width: 100%; border-collapse: collapse; }
-    th, td { padding: 0.5em; border: 1px solid #ccc; text-align: center; }
-    .results { margin-top: 2em; font-weight: bold; }
-    .salarie-block { border: 1px solid #ddd; padding: 1em; margin-bottom: 2em; border-radius: 6px; }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Calculateur de Titres Restaurant</h1>
-  <form id="trForm">
-    <div id="salariés"></div>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Calculateur de Titres Restaurant</h1>
+    <form id="trForm" class="space-y-6">
+      <div id="salariés" class="space-y-6"></div>
 
-    <button type="button" onclick="ajouterSalarie()">+ Ajouter une salariée</button>
+      <button type="button" onclick="ajouterSalarie()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">+ Ajouter une salariée</button>
 
-    <label>Mois (au format AAAA-MM)
-      <input type="month" id="mois" required>
-    </label>
+      <div>
+        <label class="block font-medium">Mois (au format AAAA-MM)</label>
+        <input type="month" id="mois" required class="mt-1 w-full p-2 border border-gray-300 rounded">
+      </div>
 
-    <label>Jours fériés (JJ/MM séparés par virgule, prérempli)
-      <input type="text" id="feries" value="01/01,01/05,08/05,14/07,15/08,01/11,11/11,25/12">
-    </label>
+      <div>
+        <label class="block font-medium">Jours fériés (JJ/MM séparés par virgule, prérempli)</label>
+        <input type="text" id="feries" value="01/01,01/05,08/05,14/07,15/08,01/11,11/11,25/12" class="mt-1 w-full p-2 border border-gray-300 rounded">
+      </div>
 
-    <button type="submit">Calculer</button>
-  </form>
+      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Calculer</button>
+    </form>
 
-  <div class="results" id="resultat"></div>
+    <div class="results text-lg mt-6 text-gray-800 font-semibold" id="resultat"></div>
+  </div>
 
   <script>
     let salarieCount = 0;
@@ -40,23 +36,26 @@
     function ajouterSalarie(data = {}) {
       const container = document.getElementById("salariés");
       const block = document.createElement("div");
-      block.className = "salarie-block";
+      block.className = "bg-gray-50 border border-gray-300 rounded-lg p-4";
       block.innerHTML = `
-        <label>Nom
-          <input type="text" name="nom" value="${data.nom || ''}" required>
-        </label>
+        <div class="mb-4">
+          <label class="block font-medium">Nom</label>
+          <input type="text" name="nom" value="${data.nom || ''}" required class="mt-1 w-full p-2 border border-gray-300 rounded">
+        </div>
 
-        <label>Jours travaillés (Ctrl/Cmd+clic pour sélection multiple)
-          <select name="joursTravailles" multiple required>
+        <div class="mb-4">
+          <label class="block font-medium">Jours travaillés (Ctrl/Cmd+clic pour sélection multiple)</label>
+          <select name="joursTravailles" multiple required class="mt-1 w-full p-2 border border-gray-300 rounded">
             ${jours.map(j => `<option ${data.joursTravailles?.includes(j) ? 'selected' : ''}>${j}</option>`).join('')}
           </select>
-        </label>
+        </div>
 
-        <label>Jours sans pause déjeuner
-          <select name="joursSansPause" multiple>
+        <div class="mb-4">
+          <label class="block font-medium">Jours sans pause déjeuner</label>
+          <select name="joursSansPause" multiple class="mt-1 w-full p-2 border border-gray-300 rounded">
             ${jours.map(j => `<option ${data.joursSansPause?.includes(j) ? 'selected' : ''}>${j}</option>`).join('')}
           </select>
-        </label>
+        </div>
       `;
       container.appendChild(block);
     }
@@ -81,7 +80,7 @@
       const dernierJour = new Date(annee, moisNum, 0).getDate();
       const feries = parseFeries(feriesStr, annee, moisNum);
 
-      const blocks = document.querySelectorAll(".salarie-block");
+      const blocks = document.querySelectorAll(".bg-gray-50");
       let resultHTML = "";
 
       blocks.forEach(block => {
