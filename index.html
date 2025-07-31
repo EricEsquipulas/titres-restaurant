@@ -60,17 +60,37 @@
     ];
 
     function setDefaultMonthAndFeries() {
-      const now = new Date();
-      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      const year = nextMonth.getFullYear();
-      const month = (nextMonth.getMonth() + 1).toString().padStart(2, '0');
-      document.getElementById("mois").value = `${year}-${month}`;
+  const moisInput = document.getElementById("mois").value;
+  const [year, month] = moisInput.split("-").map(Number);
 
-      const currentMonthFeries = feriesNationaux.filter(dateStr => {
-        const [day, mon] = dateStr.split("/").map(Number);
-        return mon === parseInt(month);
-      });
-      document.getElementById("feries").value = currentMonthFeries.join(",");
+  let currentMonthFeries = feriesNationaux.filter(dateStr => {
+    const [day, mon] = dateStr.split("/").map(Number);
+    return mon === month && !(dateStr === "01/05");
+  });
+
+  // Vérification spéciale pour le 1er mai
+  if (month === 5) {
+    const firstMay = new Date(year, 4, 1); // Mois 4 = mai
+    const dayName = getWeekdayName(firstMay);
+    let includeFirstMay = false;
+
+    // Récupère tous les salariés présents
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const salaries = saved ? JSON.parse(saved) : defaultSalaries;
+
+    for (const salarie of salaries) {
+      if (salarie.joursTravailles.includes(dayName)) {
+        includeFirstMay = true;
+        break;
+      }
+    }
+
+    if (includeFirstMay) {
+      currentMonthFeries.push("01/05");
+    }
+  }
+
+  document.getElementById("feries").value = currentMonthFeries.join(",");
     }
 
     function ajouterSalarie(data = {}) {
@@ -175,6 +195,7 @@
     });
 
     setDefaultMonthAndFeries();
+document.getElementById("mois").addEventListener("change", setDefaultMonthAndFeries);
     restaurerSalaries();
   </script>
 </body>
