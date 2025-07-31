@@ -75,8 +75,14 @@
     let includeFirstMay = false;
 
     // Récupère tous les salariés présents
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const salaries = saved ? JSON.parse(saved) : defaultSalaries;
+    const blocks = document.querySelectorAll(".bg-gray-50");
+    const salaries = Array.from(blocks).map(block => {
+      return {
+        nom: block.querySelector("input[name='nom']").value,
+        joursTravailles: Array.from(block.querySelector("select[name='joursTravailles']").selectedOptions).map(o => o.value),
+        joursSansPause: Array.from(block.querySelector("select[name='joursSansPause']").selectedOptions).map(o => o.value)
+      };
+    });
 
     for (const salarie of salaries) {
       if (salarie.joursTravailles.includes(dayName)) {
@@ -194,9 +200,9 @@
       sauvegarderSalaries();
     });
 
-    setDefaultMonthAndFeries();
-document.getElementById("mois").addEventListener("change", setDefaultMonthAndFeries);
     restaurerSalaries();
+document.getElementById("mois").addEventListener("change", setDefaultMonthAndFeries);
+setDefaultMonthAndFeries();
   </script>
 </body>
 </html>
