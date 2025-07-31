@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculateur de Titres Restaurant</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 2em; }
+    label { display: block; margin-top: 1em; }
+    input, select, button { margin-top: 0.5em; padding: 0.4em; width: 100%; }
+    table { margin-top: 2em; width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.5em; border: 1px solid #ccc; text-align: center; }
+    .results { margin-top: 2em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Calculateur de Titres Restaurant</h1>
+  <form id="trForm">
+    <label>Nom de la salariée
+      <input type="text" id="nom" required>
+    </label>
+
+    <label>Jours travaillés (Ctrl/Cmd+clic pour sélection multiple)
+      <select id="joursTravailles" multiple required>
+        <option>lundi</option><option>mardi</option><option>mercredi</option>
+        <option>jeudi</option><option>vendredi</option><option>samedi</option><option>dimanche</option>
+      </select>
+    </label>
+
+    <label>Jours sans pause déjeuner
+      <select id="joursSansPause" multiple>
+        <option>lundi</option><option>mardi</option><option>mercredi</option>
+        <option>jeudi</option><option>vendredi</option><option>samedi</option><option>dimanche</option>
+      </select>
+    </label>
+
+    <label>Mois (au format AAAA-MM)
+      <input type="month" id="mois" required>
+    </label>
+
+    <label>Jours fériés (format JJ/MM séparés par virgule, ex : 15/08)
+      <input type="text" id="feries" placeholder="Exemple : 15/08">
+    </label>
+
+    <button type="submit">Calculer</button>
+  </form>
+
+  <div class="results" id="resultat"></div>
+
+  <script>
+    function getWeekdayName(date) {
+      return ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"][date.getDay()];
+    }
+
+    function parseFeries(ferieString, year, month) {
+      if (!ferieString) return [];
+      return ferieString.split(',').map(item => {
+        const [day, mon] = item.trim().split('/').map(Number);
+        return new Date(year, mon - 1, day).toDateString();
+      });
+    }
+
+    document.getElementById("trForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nom = document.getElementById("nom").value;
+      const joursTravailles = Array.from(document.getElementById("joursTravailles").selectedOptions).map(o => o.value);
+      const joursSansPause = Array.from(document.getElementById("joursSansPause").selectedOptions).map(o => o.value);
+      const mois = document.getElementById("mois").value;
+      const feriesStr = document.getElementById("feries").value;
+
+      const [annee, moisNum] = mois.split("-").map(Number);
+      const dernierJour = new Date(annee, moisNum, 0).getDate();
+      const feries = parseFeries(feriesStr, annee, moisNum);
+
+      let total = 0;
+      for (let jour = 1; jour <= dernierJour; jour++) {
+        const date = new Date(annee, moisNum - 1, jour);
+        const nomJour = getWeekdayName(date);
+        const dateStr = date.toDateString();
+        if (
+          joursTravailles.includes(nomJour) &&
+          !joursSansPause.includes(nomJour) &&
+          !feries.includes(dateStr)
+        ) {
+          total++;
+        }
+      }
+
+      document.getElementById("resultat").innerHTML =
+        `Salariée <strong>${nom}</strong> : <strong>${total}</strong> titres restaurant pour ${mois}`;
+    });
+  </script>
+</body>
+</html>
